@@ -1,0 +1,32 @@
+<script type="text/javascript" src="stuff/lib/jquery-2.1.3.min.js"></script> 
+<script type="text/javascript" src="stuff/lib/underscore-min.js"></script> 
+
+<script type="text/javascript">
+	var url = document.createElement("a");
+	url.href = window.location.href;
+
+	console.log(url.href);
+	console.log("**" + url.pathname + "**")
+	var reg = new RegExp("^/?([a-zA-Z0-9]+)\!$");
+	var matches = reg.exec(url.pathname);
+	if(matches!= null){
+		console.log("is url shortened");
+		
+		var mongoUrl = "https://api.mongolab.com/api/1/databases/test/collections/urls?q={\"key\":\"" + matches[1] + "\"}&apiKey=5062cef2e4b088b309ccc936"
+		
+		console.log("get url >> " + mongoUrl);
+		
+		$.ajax({ 
+				url: mongoUrl,
+				type: "GET",
+				success:function(data){
+					console.log(data);
+					window.location.replace(_.pluck(data, "url"));
+				}
+		});
+	}	
+	else{
+		console.log("is NOT url shortened");
+		window.location.replace("/404landing.html");
+	}
+</script>
