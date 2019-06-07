@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Excel tests</title>
+    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript">
+	$(document).ready(function () {
+		$("#clrBtn").click(function(){
+			$("input[type='text']").each(
+				function(){
+					$(this).val("");
+				}
+			);
+		});
+			
+		$('.js-excel-handler').on('paste', function () {
+			var element = this;
+			
+			setTimeout(function () {
+				pasteHandler(element);
+			}, 100);
+		});
+	});
+	
+
+function pasteHandler(element) {
+	//just for IE
+	if (window.clipboardData) { //IE does not allow multilines into input fields
+		var clipped = window.clipboardData.getData('Text');
+		clipped = clipped.replace(/(\r\n|\n|\r)/gm, ' ');
+		$(element).val(clipped);
+	}
+	var stringData = $(element).val();
+	var excelData = excelToArrays(stringData);
+	var $contextFields = $(element).closest('form').find('.js-excel-handler');
+	var index = $contextFields.index($(element));
+	var $field;
+
+	for (var row = 0; row < excelData.length; row++) {
+		for (var col = 0; col < excelData[row].length; col++) {
+			$field = $contextFields.eq(index);
+			index += 1;
+
+			if ($field.length) {
+				$field.val(excelData[row][col]).trigger('change');
+
+				if ($.isFunction($field.valid)) {
+					$field.valid();
+				}
+			}
+		}
+	}
+}
+
+//ok for number and accounting
+function excelToArrays(stringData) {
+	if (stringData.split('\t').length > 1) {
+		return excelMultiColumnToArrays(stringData);
+	} else {
+		return excelSingleColumnToArrays(stringData);
+	}
+}
+
+function excelSingleColumnToArrays(stringData) {
+	var arrays = [];
+
+	//split into rows
+	var rows;
+	if (stringData.indexOf('\n') != -1) {
+		rows = stringData.split('\n');
+	} else {
+		rows = stringData.split(' ');	
+	}
+
+	//cleanup
+	for (var index = rows.length - 1; index >= 0; index--) {
+		if (rows[index].length == 0){
+			rows.splice(index, 1);
+		}
+		else{ 
+			if (rows[index] == " " || rows[index] == "	"){ //space tab
+				rows.splice(index, 1);
+			}
+		}
+	}	
+	
+	console.log("excelSingleColumnToArrays");
+	console.log(rows);
+	console.log(rows.length);
+	
+	for (var rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+		var item = [];
+		item.push(rows[rowNumber]);
+		arrays.push(item);
+	}
+
+	return arrays;
+
+}
+
+function excelMultiColumnToArrays(stringData) {
+	var arrays = [];
+
+	//split into rows
+	var rows;
+	if (stringData.indexOf('\n') != -1) {
+		rows = stringData.split('\n');
+	} else {
+		rows = stringData.split(' ');
+	}
+
+	//cleanup
+	for (var index = rows.length - 1; index >= 0; index--) {
+		if (rows[index].length == 0){
+			rows.splice(index, 1);
+		}
+		else{ 
+			if (rows[index] == " " || rows[index] == "	"){ //space tab
+				rows.splice(index, 1);
+			}
+		}
+	}	
+	
+	if (rows.length == 1){
+		var delim = '\t';
+
+		columns = rows[0].split(delim);
+
+		for (var rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+			var item = [];
+			var data = rows[rowNumber].split(delim);
+
+			for (var columnNumber = 0; columnNumber < data.length; columnNumber++) {
+				item.push(data[columnNumber]);
+			}
+
+			arrays.push(item);
+		}
+	}
+	else{
+		for (var rowNumber = 0; rowNumber < rows.length; rowNumber++) {
+			var item = [];
+			item.push(rows[rowNumber]);
+			arrays.push(item);
+		}
+	}
+	return arrays;
+}	
+	</script>
+</head>
+<body>
+    <form id="valores">
+		<table>
+			<thead>
+				<th>&nbsp;</th>
+				<th>Age 00-10</th>
+				<th>Age 11-20</th>
+				<th>Age 21-40</th>
+				<th>Age 41-99</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<b>Plan 1</b>
+					</td>
+					<td>
+						<input class="js-excel-handler" type="text" style="width:50px;"/>
+					</td>
+					<td>
+						<input class="js-excel-handler" type="text" style="width:50px;"/>
+					</td>
+					<td>
+						<input class="js-excel-handler" type="text" style="width:50px;"/>
+					</td>
+					<td>
+						<input class="js-excel-handler" type="text" style="width:50px;"/>
+					</td>
+				</tr>
+			   
+			</tbody>
+		</table>
+	</form>
+    <p>
+        <button id="clrBtn">Clear</button>
+    </p>
+
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<html>
+<head>
+	<meta name="robots" content="noindex">
+	<meta charset="ISO-8859-1">
+	<link rel="icon" href="ooo.ico" />
+	<title>Out of the Office</title>
+
+	<!-- Tangle -->	
+    <script type="text/JavaScript" src="lib/Tangle.js?v1"></script>	
+    <script type="text/JavaScript" src="lib/TangleKit.js?v2"></script>	
+	<script type="text/JavaScript" src="lib/mootools.js?v1"></script>
+	<script type="text/JavaScript" src="lib/sprintf.js?v1"></script>
+	<script type="text/JavaScript" src="lib/BVTouchable.js?v1"></script>	
+	<script type="text/JavaScript" src="lib/jquery-2.1.3.min.js"></script>	  
+	
+	<script type="text/JavaScript">
+	var en_names = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+	var pt_names = new Array("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez");
+	var es_names = new Array("Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic");
+	
+	var curr_date,curr_month,curr_year;
+	$(document).ready(
+		function(){
+			setUpTangle();
+		});
+
+	function pad(num) {
+		var s = "0" + num;
+		return s.substr(s.length-2);
+	}	
+	
+	function doDate(nb, arr){
+		var d = new Date();
+		d.setDate(d.getDate() + nb); 
+		
+		var curr_date = pad(d.getDate());
+		var curr_month = d.getMonth();
+		var curr_year = d.getFullYear();
+		return curr_date + "/" + arr[curr_month] 	+ "/" + curr_year;	
+	}
+
+	function doDateEn(nb){
+		return doDate(nb, en_names);
+	}
+	
+	function doDateEs(nb){
+		return doDate(nb, es_names);
+	}
+
+	function doDatePt(nb){
+		return doDate(nb, pt_names);
+	}
+
+	function setUpTangle () {
+		var tangle = new Tangle (document.getElementById("root"), {
+			initialize: function () {
+				this.who = "John Doe";
+				this.whypt = "pt";
+				this.whyen = "en";
+				this.whyes = "es";
+				this.dt = 10;
+			},
+			update: function () {
+				this.p1 = this.who;
+				this.p2en = doDateEn(parseInt(this.dt, 10));
+				this.p2pt = doDatePt(parseInt(this.dt, 10));
+				this.p2es = doDateEs(parseInt(this.dt, 10));
+				this.m1 = this.whypt;
+				this.m2 = this.whyen;
+				this.m3 = this.whyes;
+			}
+		});
+
+		$(".TKTextFieldInput").first().select().focus();	
+	}
+	</script>	
+
+    <link rel="stylesheet" type="text/css" href="lib/TangleKit.css">	
+	<style type="text/css">
+		p, label {
+			font-family:courier;
+			font-size: large;
+		}
+		label{
+			font-weight:bold;
+		}
+		input{
+			font-family:courier;
+			font-size: medium;
+		}
+		.TKTextFieldInput{width:230px;}
+		span.Desc>input{width:500px;}
+		.TKNumberFieldInput{width:50px;}
+	</style>
+</head>
+<body id="root">
+	<table>
+			<tr>
+				<td><label>Substituto</label></td>
+				<td><span class="TKTextField" id="who" data-var="who"></span></td>
+			</tr>
+			<tr>
+				<td valign="top"><label>Prop&oacute;sito</label></td>
+				<td>
+					<span class="TKTextField Desc" id="whypt" data-var="whypt"></span>
+					<br />
+					<span class="TKTextField Desc" id="whyen" data-var="whyen"></span>
+					<br />
+					<span class="TKTextField Desc" id="whyes" data-var="whyes"></span>
+			</td>
+		</tr>
+		<tr>	
+			<td><label>Dias fora</label></td>
+			<td><span class="TKNumberField" id="dt" data-var="dt"></span></td>
+		</tr>
+	</table>
+	
+	<p>
+	------------------------------
+	</p>
+
+	<p>
+	<span data-var="m1"></span><br />
+	Estarei fora do escrit&oacute;rio com acesso limitado &agrave;s minhas mensagens ou &agrave;s minhas liga&ccedil;&otilde;es. Contate <b data-var="p1"></b> se necess&aacute;rio ou aguarde meu retorno (<b data-var="p2pt"></b>). 
+	</p>
+
+	<p>
+	<span data-var="m2"></span><br />
+	I will be out of the office with limited access to my messages or phone calls. Contact <b data-var="p1"></b> if necessary or wait for my return (<b data-var="p2en"></b>).
+	</p>
+
+	<p>
+	<span data-var="m3"></span><br />
+	Estar&eacute; fuera de la oficina con acceso limitado a mis mensajes o llamadas telef&oacute;nicas. P&oacute;ngase en contacto con <b data-var="p1"></b> si es necesario o espera a mi regreso (<b data-var="p2es"></b>).
+	</p>
+
+	<p>
+	------------------------------
+	</p>
+
+	<p>
+	<span data-var="m1"></span><br />
+	Estarei fora do escrit&oacute;rio sem acesso &agrave;s minhas mensagens ou &agrave;s minhas liga&ccedil;&otilde;es. Contate <b data-var="p1"></b> se necess&aacute;rio ou aguarde meu retorno (<b data-var="p2pt"></b>). 
+	</p>
+
+	<p>
+	<span data-var="m2"></span><br />
+	I will be out of the office without access to my messages or phone calls. Contact <b data-var="p1"></b> if necessary or wait for my return (<b data-var="p2en"></b>).
+	</p>
+
+	<p>
+	<span data-var="m3"></span><br />
+	Estar&eacute; fuera de la oficina sin acceso a mis mensajes o llamadas telef&oacute;nicas. P&oacute;ngase en contacto con <b data-var="p1"></b> si es necesario o espera a mi regreso (<b data-var="p2es"></b>).
+	</p>
+
+</body>
+</html>

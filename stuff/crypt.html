@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex">
+	<link rel="icon" href="key.ico" />
+	<title>My crypt</title>
+	
+	<link
+		rel="stylesheet"
+		href="lib/bootstrap.min.css"
+	/>
+
+	<script
+		src="lib/jquery-2.1.3.min.js">
+	</script>
+
+	<script
+		src="lib/bootstrap.min.js">
+	</script>
+		
+	<script type="text/javascript">
+	
+	var letters = "úÚaA!bB?cCçÇ.dD,eE;fF:gG/hH@iI(jJ)kK[lL]mM{nN}oO-pP_qQ'rR&sS#tT=uU+vV|wW*xX~yY%zZ$0>1<2áÁ3éÉ4ãÃ5êÊ6àÀ7õÕ8íÍ9óÓ";
+	
+	$(document).ready(function(){
+		$('[data-toggle="tooltip"]').tooltip();
+
+		$("#original").keydown(function(e){
+			if(((e.keyCode || e.which) == 13) && !e.shiftKey) {
+			  e.preventDefault();
+			  $("#btnC").click();
+			}
+		});
+
+		$("#crypted").keydown(function(e){
+			if(((e.keyCode || e.which) == 13) && !e.shiftKey) {
+			  e.preventDefault();
+			  $("#btnD").click();
+			}
+		});
+		
+		$("#original").focus();
+	});
+
+	function doIt(mode, txt){
+		dbg("txt>>"+txt);
+		var key="";
+		var dict = {};
+	
+		if (mode == "c"){
+			key = makeRandom(2);
+			while(key[0]==key[1]){key = makeRandom(2);}	//se as letras são iguais não encripta nada
+		
+			dict = makeDict(key,mode);
+			
+			var crypted="";
+			var last="";
+			for (var i = 0, len = txt.length; i < len; i++) {
+				if (letters.indexOf(txt[i]) == -1){
+					if (txt[i] == " ") {crypted += makeRandom(1);} //sempre coloca uma letra a mais no fim de cada palavra
+					crypted += txt[i];
+				}
+				else{
+					crypted += dict[txt[i]];
+				}
+				last = txt[i];
+			}
+			
+			if (last != " ") {crypted += makeRandom(1);}
+			
+		    //vamos colocar 3 palavras com tamanho entre 4 e 7
+		    //posicionados a 1/3 da string para despistar :)))
+			var wordDecoy1 = makeRandom(Math.floor(Math.random()*(4) + 7))
+			var wordDecoy2 = makeRandom(Math.floor(Math.random()*(4) + 7))
+			var wordDecoy3 = makeRandom(Math.floor(Math.random()*(4) + 7))
+			var decoyLength = 4 + wordDecoy1.length + wordDecoy2.length + wordDecoy3.length;
+			var decoyInitPosition = Math.floor(crypted.length/3);
+			
+			dbg("crypted>>" + crypted);
+			var cryptedPart1 = crypted.substring(0,decoyInitPosition);
+			dbg("part1>" + cryptedPart1);
+			var cryptedPart2 = crypted.substring(decoyInitPosition);
+			dbg("part2>" + cryptedPart2);
+			
+			crypted = cryptedPart1 + " " +
+						wordDecoy1 + " " +
+						wordDecoy2 + " " +
+						wordDecoy3 + " " +
+						cryptedPart2 + " ";
+			
+			var trailer = decoyInitPosition + "X" + decoyLength;
+			dbg("trailer>" + trailer);
+			
+			for (var i = 0, len = trailer.length; i < len; i++) {
+				crypted += dict[trailer[i]];
+			}
+			
+			var keyLength = Math.floor(Math.random()*(5) + 6);
+			dbg("keyLength>>" + keyLength);
+			
+			var keyWithSomeRandomLetters = makeRandom(keyLength - 6) + key + makeRandom(4); //sempre põe a chave com alguns caracteres extras e o tamanho também é random entre 6 e 10 caracteres
+			
+			crypted = keyWithSomeRandomLetters + " " + crypted;
+					
+			dbg("crypted>>" + crypted);
+			dbg("key>>" + key);
+			
+			return crypted;
+		}
+		else if (mode == "d"){
+			var idx = txt.indexOf(" ");
+			dbg("idx>>" + idx);
+			var firstWord = txt.substring(0, idx);
+			dbg("firstWord>>" + firstWord);
+			key= firstWord.substring(firstWord.length - 6, firstWord.length - 4);
+			
+			dict = makeDict(key,mode);
+		
+			var decrypted="";
+			var last="";
+			
+			txtFixed = txt.substring(txt.indexOf(" ") + 1); //pula a primeira palavra que é a chave
+			
+			dbg("txtFixed>>" + txtFixed);
+			
+			//temos que remover as palavras de despiste
+			var offset = "";
+			for (var i = txtFixed.length - 1; i > 0; i--) {
+				if (txtFixed[i] == " ") break;
+				offset = dict[txtFixed[i]] + offset;
+			}
+			dbg("offset" + offset);
+
+			var offsetParts = offset.split('X');
+			var initialPositionDecoy = offsetParts[0];
+			var lengthDecoy = offsetParts[1];
+	
+			var txtFixed = cut(txtFixed,
+					initialPositionDecoy,
+					parseInt(initialPositionDecoy,10) + parseInt(lengthDecoy,10)); //pula as palavra de despiste do meio
+		
+			dbg("txtFixed>>" + txtFixed);
+			
+			txtFixed = txtFixed.substring(0, txtFixed.length - offset.length - 1); //pula a última palavra que tem o tamanho do despiste
+
+			dbg("txtFixed>>" + txtFixed);
+
+			for (var i = 0, len = txtFixed.length; i < len; i++) {
+				if (letters.indexOf(txtFixed[i]) == -1){
+					if (txtFixed[i] == " ") {decrypted = decrypted.substring(0, decrypted.length - 1);} //a última letra não é da palavra
+					decrypted += txtFixed[i];
+				}
+				else{
+					decrypted += dict[txtFixed[i]];
+				}
+				last = txtFixed[i];
+			}
+			
+			if (last != " ") {decrypted = decrypted.substring(0, decrypted.length - 1);}
+			
+
+			dbg("result>>" + decrypted);
+
+			return decrypted;
+		}
+	}
+
+	function makeDict(key, mode){
+		var dict = {};
+
+		dbg("key in makeDict>>" + key);
+		
+		var idxInit = 0;
+		var idxAim = 1;
+
+		if (mode == "d"){
+			idxInit = 1;
+			idxAim = 0;
+		}
+
+		dict[key[idxInit]]=key[idxAim];
+		
+		var init = letters.indexOf(key[idxInit]);
+		var aim = letters.indexOf(key[idxAim]);
+		var idxFrom = compute(init);
+		var idxTo = compute(aim);
+						
+		while (idxFrom != init){
+			dict[letters[idxFrom]] = letters[idxTo];
+			idxFrom = compute(idxFrom);
+			idxTo = compute(idxTo);
+		}
+		
+		return dict;
+	}
+
+	function compute(number){
+		if (number == letters.length - 1)
+			return 0;
+		else
+			return number + 1;
+	}
+	
+	function makeRandom(n){
+		var txt = "";
+
+		for( var i=0; i < n; i++ )
+			txt += letters.charAt(Math.floor(Math.random() * letters.length));
+
+		return txt;
+	}
+
+	function cut(txt, cutStart, cutEnd){
+  		return txt.substr(0,cutStart) + txt.substr(cutEnd);
+	}
+	
+	function exec_(what, mode){
+		var mapping = { c: "crypt", d: "decrypt"};
+		
+		dbg("bgn function " + mapping[mode] + "()");
+		
+		var result = doIt(mode, what);
+
+		dbg("end function " + mapping[mode] + "()");
+		
+		return result;
+	}
+	
+	function exec(mode){
+		var mapping = {
+			c: {
+				src:"#original",
+				dest:"#crypted",
+				timerOn:"#cTime",
+				timerOff:"#dTime"},
+			d: {
+				src:"#crypted",
+				dest:"#original",
+				timerOn:"#dTime",
+				timerOff:"#cTime"}
+		};
+		
+		var _ = mapping[mode];
+		
+		var t0 = performance.now();
+		$(_.dest).val(exec_(exec_($(_.src).val(), mode), mode));
+		$(_.src).val("");
+		var t1 = performance.now();
+		$(_.timerOn).html(" took " + Math.floor(t1 - t0) + " millisecond(s).");
+		$(_.timerOff).html("");
+	}
+
+	function test(){
+		test_("sérgio RoDrIgUeS giraldo, 1972!");
+
+		test_("eloá lia téo");
+
+		test_("foo");
+
+		test_("Star stuff harvesting star light laws of physics Apollonius of Perga the ash of stellar alchemy, white dwarf decipherment network of wormholes muse about brain is the seed of intelligence emerged into consciousness, the only home we've ever known venture paroxysm of global death great turbulent clouds Orion's sword, citizens of distant epochs rich in mystery, Euclid Apollonius of Perga are creatures of the cosmos rich in heavy atoms rings of Uranus Drake Equation. Cosmic fugue the ash of stellar alchemy, tesseract rings of Uranus the only home we've ever known as a patch of light. Two ghostly white figures in coveralls and helmets are soflty dancing hundreds of thousands gathered by gravity and billions upon billions upon billions upon billions upon billions upon billions upon billions");
+	}
+	
+	function test_(original){
+		console.clear();
+
+		dbg(original);
+		
+		var ok = true;
+        var before = original;
+        var after = "";
+		for (var i=0;i<20;i++)
+		{
+			dbg("############# ITERATION " +  (i+1) + " ################################################");
+			after = exec_(before, "c");
+			before = exec_(after, "d");
+			if (before != original) {
+				ok = false;
+				break;
+			}
+		}
+
+		if (ok){
+			dbg("#testsOk");
+		}
+		else{
+			dbg("#testsFail");
+		}
+	}
+
+	function dbg(what){
+		console.log(what);
+	}
+	</script>
+
+	<style>
+	body{
+		margin:5px;
+		margin-left:15px;
+	}
+	
+	body, button{
+		font-family:verdana;
+	}
+	
+	textarea{
+		font-family:courier;
+		font-weight:bold;
+		font-size:medium;
+	}
+
+	button.common{
+		color:#000;
+		border:1px solid black;
+		margin-left:5px;
+	}
+
+	button.test{
+		color:#00f;
+		border:1px dotted black;
+		padding-left:5px;
+		padding-right:25x;
+	}
+	
+	span{
+		padding:5px;
+		font-weight:bold;
+		font-size:small;
+		font-style: italic;
+	}
+	
+	hr{
+		border: 0;
+		border-bottom: 1px dashed #c0c0c0;
+		background: #999;
+	}
+	</style>
+</head>
+
+<body>
+	<h4>original</h4>
+	
+	<textarea id="original" cols="80" rows="6"></textarea>
+	
+	<button id="btnC" class="common" accesskey="c" data-toggle="tooltip"  title="alt+c" onclick="exec('c');">Encrypt</button>
+	<span id="cTime"></span>
+	
+	<br/>
+	
+	<h4>crypted</h4>
+	
+	<textarea id="crypted" cols="80" rows="10"></textarea>
+	
+	<button id="btnD" class="common" accesskey="u" data-toggle="tooltip"  title="alt+u" onclick="exec('d');">Decrypt</button>
+	<span id="dTime"></span>
+
+	<br/>
+	<hr />
+	
+	<button class="test" onclick="test();" accesskey="t" data-toggle="tooltip" title="results in console (alt+t)">Run tests</button>
+	
+	<br/>
+	<hr />
+	
+	<a href="tea.html">Tea - Tiny encrypt algorithm</a>
+</body>
+</html>

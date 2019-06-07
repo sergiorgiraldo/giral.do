@@ -1,0 +1,126 @@
+<html>
+<head>
+	<meta name="robots" content="noindex">
+	<link rel="icon" href="chain.ico" />
+	<title>Url Shortener</title>
+	<base target="_blank">
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  	<style type="text/css">
+		body{
+			font-family: verdana;
+		}
+        table,tr,td{
+            font-size: small;
+        }
+		#title{
+			font-size: x-large;
+		}
+		input,textarea{
+			font-family: verdana;
+			font-size: large;
+		}    
+		textarea{
+			width: 280px;
+		}
+		a, a:link, a:visited {
+			text-decoration: none !important;
+			color: #000 !important;
+		}
+		a:hover {
+			text-decoration: underline !important; 
+			color: #00f !important;
+		}
+		a:active {
+			text-decoration: none !important;
+		}
+		/*mobile*/
+		@media only screen 
+		  and (min-device-width: 320px) 
+		  and (max-device-width: 480px)
+		  and (-webkit-min-device-pixel-ratio: 2) {
+			#loading, #rows{
+				display:none;
+			}
+			#title{
+				font-size: medium;
+			}
+		}		
+	</style>	
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript">
+		function get_short_url(longUrl, func)
+		{
+		    $.getJSON(
+		        "https://api-ssl.bitly.com/v3/shorten?", 
+		        { 
+		            "format": "json",
+		            "access_token": "bitly access token",
+		            "longUrl": longUrl
+		        },
+		        function(response)
+		        {
+		            func(response.data.url);
+		        }
+		    );
+		}
+
+		function makeShort() 
+		{
+		   	var longUrl = document.getElementById("longurl").value;
+		   	var myName = document.getElementById("myname").value;
+			if ($("#suffix").is(":checked")) longUrl = longUrl + "#srg";
+
+			get_short_url(longUrl, function(short_url) {
+				if(short_url != null)
+				{
+					var shortened = short_url.replace("bit.ly", "x.giral.do").replace("https", "http");
+					var shortenedForInput = shortened;	
+					if (myName != ""){
+						shortenedForInput = "http://x.giral.do/" + myName;
+					}
+
+					str = "<p id=\"title\">Short URL</p><textarea id='txtShort' rows='1' columns='50'>" + shortenedForInput + "</textarea>&nbsp;&nbsp;";
+					str += "<input type='button' value='To Clipboard' onclick='toClip()' />";
+					document.getElementById("output").innerHTML = str; 
+					$.post("googl.php",{ url: longUrl, short: shortened, myname: myName });
+					$("#loading").show();
+					$("#rows").load( "rows.php" , function() {
+	          			$("#loading").hide();
+	        		});
+					toClip();
+				}
+				else
+				{
+					alert("error: creating short url");
+				}			});
+
+		}
+		function load()
+		{
+	    	$("#rows").load( "rows.php" , function() {
+	        	$("#loading").hide();
+	        });
+			document.getElementById("longurl").focus();
+		}
+		function toClip(){
+			document.getElementById("txtShort").select();
+			document.execCommand("copy");
+		}
+		window.onload= load;
+	</script>
+	
+</head>
+<body>
+	<p id="title">Url Shortener&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="font-weight:bold;" class="fa fa-link"></i></p>
+	
+	<input type="text" id="longurl" name="url" value="" size="50" placeholder="url" /> <input type="checkbox" id="suffix" checked="checked" />#srg<br/><br />
+	<input type="text" id="myname" name="myname" value="" size="50"  placeholder="my name" /><br/><br/>
+	<input type="button" value="Create Short" onclick="makeShort();" /> <br/><br/>
+	<div id="output"></div>
+	<hr />
+	<br />
+	<div id="loading"><i class="fa fa-spinner fa-pulse"></i></div>
+	<div id="rows" />
+</body>
+</html>

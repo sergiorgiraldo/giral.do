@@ -1,0 +1,51 @@
+<html>
+<head>
+	<style type="text/css">
+	body,input,textarea{font-family:verdana}
+	input{border:1px solid black;padding:2px;}
+	</style>
+	<!-- taken from https://code.google.com/p/crypto-js/ -->
+	<script type="text/javascript" src="lib/sha1.js"></script>
+	<script type="text/javascript" src="lib/sha256.js"></script>
+	<script type="text/javascript" src="lib/md5.js"></script>
+	<script type="text/javascript" src="lib/ripemd160.js"></script>
+	<script type="text/javascript">
+		function submit(event){
+			if (event.keyCode == 13) {
+	        		doIt();
+        			return false;
+     			}		
+		}
+		function doIt(){
+			var txt=document.getElementById("origin").value;
+			document.getElementById("sha1").value = CryptoJS.SHA1(txt);
+			document.getElementById("sha256").value = CryptoJS.SHA256(txt);
+			document.getElementById("md5").value = CryptoJS.MD5(txt);
+			document.getElementById("ripemd160").value = CryptoJS.RIPEMD160(txt);
+		}
+	</script>
+</head>
+<body>
+	<p>
+		<b>Origin</b><br/>
+		<textarea id="origin" rows="4" cols="70" onkeydown="submit()"></textarea><br/><br/>
+		<button onclick="doIt();">Hash it</button>
+	</p>
+	<p>
+		<b>SHA1</b><br/>
+		<input type="text" id="sha1" size="80" readonly="readonly"/>
+	</p>
+	<p>
+		<b>SHA256</b><br/>
+		<input type="text" id="sha256" size="80"  readonly="readonly"/>
+	</p>
+	<p>
+		<b>RIPEMD160</b><br/>
+		<input type="text" id="ripemd160" size="80"  readonly="readonly"/>
+	</p>
+	<p>
+		<b>MD5</b><br/>
+		<input type="text" id="md5" size="80"  readonly="readonly"/>
+	</p>
+</body>
+</html>
