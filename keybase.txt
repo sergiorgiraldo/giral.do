@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/sergiorgiraldo
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://www.giral.do
+  * I am sergiorgiraldo (https://keybase.io/sergiorgiraldo) on keybase.
+  * I have a public key ASCQ9Vxy22e555QKOEujSErWsgh7bkJ-88EMvg6IzrDCbAo
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "012090f55c72db67b9e7940a384ba3484ad6b2087b6e427ef3c10cbe0e88ceb0c26c0a",
+      "host": "keybase.io",
+      "kid": "012090f55c72db67b9e7940a384ba3484ad6b2087b6e427ef3c10cbe0e88ceb0c26c0a",
+      "uid": "0cb74f2a7a55ba6b0ed9bfea2eb24619",
+      "username": "sergiorgiraldo"
+    },
+    "merkle_root": {
+      "ctime": 1560113229,
+      "hash": "625511a0e3a3754b96f95a005632ff0cd1ebc34999d857f4f164d173d6bd38ad19fccce3a9117c11a2582a3bebe2df986097423d62045737e73ca45daac2f5ff",
+      "hash_meta": "7605709bcac263e1311b43231f6dfc7a93b6e0437525438325d491ca88f0df60",
+      "seqno": 5538848
+    },
+    "service": {
+      "entropy": "QOyACbt9AFRC9kkrsAB3lAXo",
+      "hostname": "www.giral.do",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "4.0.0"
+  },
+  "ctime": 1560113280,
+  "expire_in": 504576000,
+  "prev": "2c090cf35443589e62531a3a4691a13abe9078f94542c20b3b93e71b1541bc29",
+  "seqno": 10,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgkPVccttnueeUCjhLo0hK1rIIe25CfvPBDL4OiM6wwmwKp3BheWxvYWTESpcCCsQgLAkM81RDWJ5iUxo6RpGhOr6QePlFQsILO5PnGxVBvCnEIErciFLTZdBVPHs7mCm9w4yOZ5Mop74ADSG/+Ezkzn1aAgHCo3NpZ8RAw/JR0/B3zMGGQWkGXIBwhqPyizl3lVpkp4s2h+Lmu6ecaLDxpEhInLvKnj4z3wP+U5vBmLNrOP9b2+vLVhVXDahzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIMOYgRTca11wczJOmGUEpbFJcFN0EjPPUjHNYnp4EcpAo3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/sergiorgiraldo
+
+==================================================================
