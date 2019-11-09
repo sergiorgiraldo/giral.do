@@ -55,7 +55,7 @@
 		        "https://api-ssl.bitly.com/v3/shorten?", 
 		        { 
 		            "format": "json",
-		            "access_token": "bitly access token",
+		            "access_token": "481c272045921ce45d4ab921284dbe839246370f",
 		            "longUrl": longUrl
 		        },
 		        function(response)
@@ -74,10 +74,10 @@
 			get_short_url(longUrl, function(short_url) {
 				if(short_url != null)
 				{
-					var shortened = short_url.replace("bit.ly", "x.giral.do").replace("https", "http");
+					var shortened = short_url.replace("bit.ly", "s.giral.do").replace("https", "http");
 					var shortenedForInput = shortened;	
 					if (myName != ""){
-						shortenedForInput = "http://x.giral.do/" + myName;
+						shortenedForInput = "http://s.giral.do/" + myName;
 					}
 
 					str = "<p id=\"title\">Short URL</p><textarea id='txtShort' rows='1' columns='50'>" + shortenedForInput + "</textarea>&nbsp;&nbsp;";

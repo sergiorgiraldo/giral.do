@@ -28,7 +28,7 @@ if (!$conn) {
 
 
 
-$sql = "SELECT DISTINCT url, short, myName FROM googl order by id desc";
+$sql = "SELECT DISTINCT url, short, myName, id FROM googl order by id desc";
 
 
 
@@ -60,7 +60,12 @@ if ($result->num_rows > 0) {
 
 		if ($row["myName"] <> ""){
 			if (strpos($row["short"], "x.giral.do") === false){
-		        echo "<td><a href='" . $row["url"] . "'>" . $row["url"] . "</a></td><td>" . $row["myName"] . "</td><td><a href='http://s.giral.do/" . $row["myName"] . "'>http://s.giral.do/" . $row["myName"] . "</a></td><td><a href='" . str_replace("s.giral.do", "goo.gl", $row["short"]) . ".info" . "'>" . "stats" . "</a></td>";				
+				if ($row["id"] < 126){
+					echo "<td><a href='" . $row["url"] . "'>" . $row["url"] . "</a></td><td>" . $row["myName"] . "</td><td><a href='http://s.giral.do/" . $row["myName"] . "'>http://s.giral.do/" . $row["myName"] . "</a></td><td><a href='" . str_replace("s.giral.do", "goo.gl", $row["short"]) . ".info" . "'>" . "stats" . "</a></td>";				
+				}
+				else{
+					echo "<td><a href='" . $row["url"] . "'>" . $row["url"] . "</a></td><td>" . $row["myName"] . "</td><td><a href='http://s.giral.do/" . $row["myName"] . "'>http://s.giral.do/" . $row["myName"] . "</a></td><td><a href='" . str_replace("http://s.giral.do", "https://bit.ly", $row["short"]) . "+" . "'>" . "stats" . "</a></td>";
+				}
 			}
 			else{
 		        echo "<td><a href='" . $row["url"] . "'>" . $row["url"] . "</a></td><td>" . $row["myName"] . "</td><td><a href='http://x.giral.do/" . $row["myName"] . "'>http://x.giral.do/" . $row["myName"] . "</a></td><td><a href='" . str_replace("http://x.giral.do", "https://bit.ly", $row["short"]) . "+" . "'>" . "stats" . "</a></td>";
